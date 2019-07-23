@@ -2,6 +2,15 @@
 
 > Project description
 
+Reviews:
+
+Create | POST | /api/:listingId/reviews |  create a new review for a listing
+Read | GET | /api/:listingId/reviews | read all reviews for a listing
+Update | PUT | /api/:listingId/reviews/:reviewId | update a review for a listing
+Update | PATCH | /api/:listingId/reviews/:reviewId | update part of a review for a listing
+Delete | DELETE | /api/:listingId/reviews/:reviewId | delete a review for a listing
+
+
 ## Related Projects
 
   - https://github.com/bedroost/gallery
