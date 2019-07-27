@@ -1,103 +1,128 @@
 const faker = require('faker');
+const stream = require('stream');
+const fs = require('fs');
 
-// reviews: {
-//   reviewId: String,
-//   listingId: String,
-//   userId: String,
-//   createdAt: Date,
-//   text: String,
-//   overallRating: Number,
-//   accuracyRating: Number,
-//   communicationRating: Number,
-//   cleanlinessRating: Number,
-//   locationRating: Number,
-//   checkInRating: Number,
-//   valueRating: Number,
-//   hasResponse: Boolean,
-//   hostId: String,
-//   responseText: String,
-//   responseCreatedAt: Date,
-// }
+const number_of_listings = 10;
+const t0 = Date.now();
+console.log(new Date());
+let t1;
+let count = 0;
 
-const generateReview = (listingId) => {
+const generateReviewCSV = (listingId) => {
   const random = faker.random.number({ min: 0, max: 100 });
-  const rating = Math.round(faker.finance.amount(1, 5, 1) / 0.5) * 0.5;
-  const review = {
-    // reviewId: String,
-    listingId,
-    userId: faker.finance.amount(1, 200, 0),
-    createdAt: faker.date.past(),
-    text: random % 2 === 0 ? faker.lorem.paragraph() : faker.lorem.paragraphs(),
-    overallRating: rating,
-    accuracyRating: Math.round(faker.finance.amount(1, 5, 1) / 0.5) * 0.5,
-    communicationRating: Math.round(faker.finance.amount(1, 5, 1) / 0.5) * 0.5,
-    cleanlinessRating: Math.round(faker.finance.amount(1, 5, 1) / 0.5) * 0.5,
-    locationRating: Math.round(faker.finance.amount(1, 5, 1) / 0.5) * 0.5,
-    checkInRating: Math.round(faker.finance.amount(1, 5, 1) / 0.5) * 0.5,
-    valueRating: Math.round(faker.finance.amount(1, 5, 1) / 0.5) * 0.5,
-    hasResponse: false,
-  };
+  const reviewDate = faker.date.past().toISOString();
+  let review = [];
+  review.push(listingId);
+  review.push(faker.finance.amount(201, 1000, 0)); //   userId: String,
+  review.push(reviewDate); //   createdAt: Date,
+  review.push(random % 5 === 0 
+    ? faker.lorem.paragraph().split(' ').slice(0, 55).join(' ') : faker.lorem.paragraph().split(' ').slice(0, 30).join(' ')); //   text: String,
+  review.push(faker.finance.amount(1, 5, 0)); //   overallRating: Number,
+  review.push(faker.finance.amount(1, 5, 0)); //   accuracyRating: Number,
+  review.push(faker.finance.amount(1, 5, 0)); //   communicationRating: Number,
+  review.push(faker.finance.amount(1, 5, 0)); //   cleanlinessRating: Number,
+  review.push(faker.finance.amount(1, 5, 0)); //   locationRating: Number,
+  review.push(faker.finance.amount(1, 5, 0)); //   checkInRating: Number,
+  review.push(faker.finance.amount(1, 5, 0)); //   valueRating: Number,
 
   if (random % 3 === 0) {
-    review.hostId = faker.finance.amount(201, 1000, 0);
-    review.responseText = faker.lorem.sentence();
+    review.push(true); //   hasResponse: Boolean,
+    review.push(faker.finance.amount(1, 200, 0)); //   hostId: String,
+    review.push(faker.lorem.sentence()); //   responseText: String,
     let today = new Date();
     today = today.toISOString().slice(0, 10);
-    const reviewdate = review.createdAt.toISOString().slice(0, 10);
-    review.responseCreatedAt = faker.date.between(reviewdate, today);
+    review.push(faker.date.between(reviewDate.slice(0, 10), today).toISOString()); //   responseCreatedAt: Date,
+  } else {
+    review.push(false);//   hasResponse: Boolean,
+    review.push(null);
+    review.push(null);
+    review.push(null);
   }
-
+  review = review.join(',');
+  review += '\n';
+  count += 1;
   return review;
 };
+// console.log(generateReviewCSV(1));
 
-for (let i = 1; i < 1000000; i += 1) {
-  generateReview(i);
-}
+const generateListingReviews = (num, listingId) => {
+  let string = '';
+  for (let i = 0; i < num; i += 1) {
+    string = string.concat(generateReviewCSV(listingId));
+  }
+  return string;
+};
+// console.log(generateListingReviews(10, 1));
+const printProgress = (progress) => {
+  process.stdout.clearLine();
+  process.stdout.cursorTo(0);
+  process.stdout.write(progress + '%');
+};
 
-// const reviews = [];
-// for (let j = 0; j < numReviews; j += 1) {
-//   const review = {};
+const headerCSV = 'listing,user,created_at,text,overall_rating,accuracy_rating,communication_rating,cleanliness_rating,location_rating,check_in_rating,value_rating,has_response,host,response_text,response_created_at\n';
 
-//   // generate data for review object
-//   const created_at = faker.date.past();
-//   const textShort = faker.lorem.paragraph();
-//   const textLong = faker.lorem.paragraphs();
-//   const username = faker.name.firstName();
-//   const avatar = faker.internet.avatar();
-//   const response_text = faker.lorem.sentence();
-//   // console.log('start: ', created_at.slice(0, 11));
-//   const start = created_at.toISOString().slice(0, 10);
-//   const currentDate = new Date();
-//   const end = currentDate.toISOString().slice(0, 10);
-//   const response_created_at = faker.date.between(start, end);
+const generateData = (writeStream, encoding, num, cb) => {
+  const test = false;
+  let listingId = num;
+  const stellar = listingId - Math.ceil(num * 0.00005);
+  const prettyDamnGood = listingId - Math.ceil(num * 0.02);
+  const meh = listingId - Math.ceil(num * 0.05);
+  let nextProgress = -1;
+  const write = () => {
+    let ok = true;
+    while (listingId > 0 && ok) {
+      let quantity = 1;
+      if (listingId > stellar) {
+        quantity = Math.floor(Math.random() * 1000) + 1000;
+      } else if (listingId > prettyDamnGood) {
+        quantity = Math.floor(Math.random() * 400) + 100;
+      } else if (listingId > meh) {
+        quantity = Math.floor(Math.random() * 40) + 10;
+      } else {
+        quantity = Math.floor(Math.random() * 5) + 1;
+      }
+      if (test) {
+        quantity = 2;
+      }
+      let progress = (1 - (listingId / num)) * 100;
+      if (progress > nextProgress) {
+        progress = Math.trunc(progress);
+        printProgress(Math.trunc(progress));
+        nextProgress = progress + 1;
+      }
+      
+      // console.log('listingId: ', listingId);
+      // console.log('Number of Reviews: ', quantity);
+      if (listingId === 1) {
+        writeStream.write(generateListingReviews(quantity, listingId), encoding, cb);
+      } else {
+        ok = writeStream.write(generateListingReviews(quantity, listingId), encoding);
+      }
+      listingId -= 1;
+    }
+    if (listingId > 0) {
+      writeStream.once('drain', write);
+    }
+  };
 
-//   // random number to determine if this review has text longer than 50 words
-//   const random_reviewLength = faker.random.number({ min: 0, max: 100 });
+  writeStream.write(headerCSV, encoding);
+  write();
+};
 
-//   // random number to determine if this review has a response
-//   const random_hasResponse = faker.random.number({ min: 0, max: 100 });
+const writeStreamCSV = fs.createWriteStream('data.csv');
 
-//   // populate empty review object
-//   // if random number is divisible by 3, review object WILL have a response.
-//   // if not, the review object will NOT have a response
-//   if (random_hasResponse % 3 === 0) {
-//     review.created_at = created_at;
-//     review.text = random_reviewLength % 2 === 0 ? textShort : textLong;
-//     review.username = username;
-//     review.avatar = avatar;
-//     review.hasResponse = true;
-//     review.response_username = response_username;
-//     review.response_avatar = response_avatar;
-//     review.response_created_at = response_created_at;
-//     review.response_text = response_text;
-//   } else {
-//     review.created_at = created_at;
-//     review.text = random_reviewLength % 2 === 0 ? textShort : textLong;
-//     review.username = username;
-//     review.avatar = avatar;
-//     review.hasResponse = false;
-//   }
-
-//   // add the populated review object into the reviews array
-//   reviews.push(review);
-// }
+generateData(writeStreamCSV, 'utf8', number_of_listings, (err) => {
+  if (err) {
+    console.log(err);
+  } else {
+    printProgress(100);
+    console.log('Rows Created: ', count);
+    t1 = Date.now();
+    let seconds = (t1 - t0) / 1000;
+    const hours = parseInt(seconds / 3600, 10);
+    seconds %= 3600;
+    const minutes = parseInt(seconds / 60, 10);
+    seconds %= 60;
+    console.log(`${hours}H, ${minutes}M, ${seconds}S`);
+  }
+});
