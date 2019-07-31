@@ -15,6 +15,7 @@ const t0 = Date.now();
 console.log(new Date());
 let t1;
 let t2;
+let t3;
 
 const pool = new pg.Pool({
   user: 'zach',
@@ -30,10 +31,11 @@ pool
 
 pool.query(`CREATE TABLE IF NOT EXISTS review
   (
-    listing INTEGER,
-    "user" INTEGER,
+    review_id INTEGER,
+    listing_id INTEGER,
+    user_id INTEGER,
     created_at timestamp with time zone,
-    text text,
+    text varchar(500),
     overall_rating smallint,
     accuracy_rating smallint,
     communication_rating smallint,
@@ -42,20 +44,30 @@ pool.query(`CREATE TABLE IF NOT EXISTS review
     check_in_rating smallint,
     value_rating smallint,
     has_response boolean,
-    host INTEGER,
-    response_text text,
-    response_created_at timestamp with time zone
+    host_id INTEGER,
+    response_text varchar(500),
+    response_created_at timestamp with time zone,
+    PRIMARY KEY (review_id)
   )`).then(() => {
   console.log('table created');
-  return pool.query(`COPY review FROM '${__dirname}/${filename}' DELIMITER ',' CSV HEADER`);
-}).then(() => {
-  t1 = Date.now();
-  console.log('database seeded');
-  elapsedTime(t0, t1);
-  return pool.query(`ALTER TABLE ${table} ADD COLUMN id SERIAL PRIMARY KEY`);
-}).then(() => {
-  t2 = Date.now();
-  console.log('added primary key');
-  elapsedTime(t1, t2);
+  return pool.query(`COPY ${table} FROM '${__dirname}/${filename}' DELIMITER ',' CSV HEADER`);
 })
+  .then(() => {
+    t1 = Date.now();
+    console.log('database seeded');
+    elapsedTime(t0, t1);
+    return pool.query(`CREATE INDEX listing_index ON ${table} (listing_id)`);
+  })
+  .then(() => {
+    t2 = Date.now();
+    console.log('added listing ID index');
+    elapsedTime(t1, t2);
+    return pool.query(`CREATE INDEX user_index ON ${table} (user_id)`);
+  })
+  .then(() => {
+    t3 = Date.now();
+    console.log('added listing ID index');
+    elapsedTime(t2, t3);
+    console.log('Done');
+  })
   .catch(err => console.log(err));

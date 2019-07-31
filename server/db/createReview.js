@@ -2,7 +2,9 @@ const faker = require('faker');
 const stream = require('stream');
 const fs = require('fs');
 
-const number_of_listings = 10;
+const test = false;
+const numberOfListings = 10000000;
+const outputFile = 'medData.csv';
 const t0 = Date.now();
 console.log(new Date());
 let t1;
@@ -10,12 +12,14 @@ let count = 0;
 
 const generateReviewCSV = (listingId) => {
   const random = faker.random.number({ min: 0, max: 100 });
-  const reviewDate = faker.date.past().toISOString();
+  let reviewDate = faker.date.past().toISOString();
+  reviewDate = reviewDate.slice(0, 19) + reviewDate.slice(23);
   let review = [];
+  review.push(count);
   review.push(listingId);
   review.push(faker.finance.amount(201, 1000, 0)); //   userId: String,
   review.push(reviewDate); //   createdAt: Date,
-  review.push(random % 5 === 0 
+  review.push(random % 5 === 0
     ? faker.lorem.paragraph().split(' ').slice(0, 55).join(' ') : faker.lorem.paragraph().split(' ').slice(0, 30).join(' ')); //   text: String,
   review.push(faker.finance.amount(1, 5, 0)); //   overallRating: Number,
   review.push(faker.finance.amount(1, 5, 0)); //   accuracyRating: Number,
@@ -31,7 +35,9 @@ const generateReviewCSV = (listingId) => {
     review.push(faker.lorem.sentence()); //   responseText: String,
     let today = new Date();
     today = today.toISOString().slice(0, 10);
-    review.push(faker.date.between(reviewDate.slice(0, 10), today).toISOString()); //   responseCreatedAt: Date,
+    let responseDate = faker.date.between(reviewDate.slice(0, 10), today).toISOString();
+    responseDate = responseDate.slice(0, 19) + responseDate.slice(23);
+    review.push(responseDate); //   responseCreatedAt: Date,
   } else {
     review.push(false);//   hasResponse: Boolean,
     review.push(null);
@@ -56,16 +62,15 @@ const generateListingReviews = (num, listingId) => {
 const printProgress = (progress) => {
   process.stdout.clearLine();
   process.stdout.cursorTo(0);
-  process.stdout.write(progress + '%');
+  process.stdout.write(`${progress}%`);
 };
 
-const headerCSV = 'listing,user,created_at,text,overall_rating,accuracy_rating,communication_rating,cleanliness_rating,location_rating,check_in_rating,value_rating,has_response,host,response_text,response_created_at\n';
+const headerCSV = 'review_id,listing_id,user_id,created_at,text,overall_rating,accuracy_rating,communication_rating,cleanliness_rating,location_rating,check_in_rating,value_rating,has_response,host_id,response_text,response_created_at\n';
 
 const generateData = (writeStream, encoding, num, cb) => {
-  const test = false;
   let listingId = num;
   const stellar = listingId - Math.ceil(num * 0.00005);
-  const prettyDamnGood = listingId - Math.ceil(num * 0.02);
+  const prettyDamnGood = listingId - Math.ceil(num * 0.005);
   const meh = listingId - Math.ceil(num * 0.05);
   let nextProgress = -1;
   const write = () => {
@@ -90,7 +95,7 @@ const generateData = (writeStream, encoding, num, cb) => {
         printProgress(Math.trunc(progress));
         nextProgress = progress + 1;
       }
-      
+
       // console.log('listingId: ', listingId);
       // console.log('Number of Reviews: ', quantity);
       if (listingId === 1) {
@@ -105,13 +110,13 @@ const generateData = (writeStream, encoding, num, cb) => {
     }
   };
 
-  writeStream.write(headerCSV, encoding);
+  // writeStream.write(headerCSV, encoding);
   write();
 };
 
-const writeStreamCSV = fs.createWriteStream('data.csv');
+const writeStreamCSV = fs.createWriteStream(`${outputFile}`);
 
-generateData(writeStreamCSV, 'utf8', number_of_listings, (err) => {
+generateData(writeStreamCSV, 'utf8', numberOfListings, (err) => {
   if (err) {
     console.log(err);
   } else {
