@@ -30,5 +30,4 @@ notes.txt
 # Settings
 .vscode
 
-server/db/bigData.csv
-server/db/medData.csv
+*.csv

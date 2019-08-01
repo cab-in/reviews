@@ -106,6 +106,7 @@ for (let i = 0; i < 100; i += 1) {
   const newListing = listingMaker(listingid, ratings, numReviews, reviews);
 
   // save newListing to database
+
   newListing.save((err) => {
     if (err) {
       console.log(err);
