@@ -2,7 +2,7 @@ const cassandra = require('cassandra-driver');
 
 const tableName = 'review_by_user';
 const columnList = 'review_id,listing_id,user_id,created_at,text,overall_rating,accuracy_rating,communication_rating,cleanliness_rating,location_rating,check_in_rating,value_rating,has_response,host_id,response_text,response_created_at';
-const fileName = 'medData.csv';
+const fileName = 'fullData.csv';
 
 const client = new cassandra.Client({
   contactPoints: ['localhost'],

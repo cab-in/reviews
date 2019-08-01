@@ -3,7 +3,7 @@ const stream = require('stream');
 const fs = require('fs');
 
 const test = false;
-const numberOfListings = 10000000;
+const numberOfListings = 1000000;
 const outputFile = 'medData.csv';
 const t0 = Date.now();
 console.log(new Date());

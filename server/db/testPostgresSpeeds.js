@@ -28,6 +28,7 @@ const testListingQuery = (startingId, num) => {
     const t0 = Date.now();
     pool.query(query)
       .then((data) => {
+        console.log(data)
         t1 = Date.now();
         times.push({
           time: elapsedTime(t0, t1),
@@ -35,28 +36,28 @@ const testListingQuery = (startingId, num) => {
         });
       });
   }
-  // setTimeout(() => console.log(times), 2000);
+  setTimeout(() => console.log(times), 2000);
   return times;
 };
 
 
-let test = testListingQuery(1000000, 50);
+let test = testListingQuery(1000000, 1);
 
-setTimeout(() => {
-  console.log(test);
-  let time = 0;
-  let quantity = 0;
-  test.forEach((val) => {
-    time += val.time;
-    quantity += val.entries;
-  });
+// setTimeout(() => {
+//   console.log(test);
+//   let time = 0;
+//   let quantity = 0;
+//   test.forEach((val) => {
+//     time += val.time;
+//     quantity += val.entries;
+//   });
 
-  const avgTime = time / test.length;
-  const avgSize = quantity / test.length;
-  console.log('AvgTime: ', avgTime);
-  console.log('AvgSize: ', avgSize);
-  console.log('AvgTime/AvgSize: ', avgTime / avgSize);
-}, 3000);
+//   const avgTime = time / test.length;
+//   const avgSize = quantity / test.length;
+//   console.log('AvgTime: ', avgTime);
+//   console.log('AvgSize: ', avgSize);
+//   console.log('AvgTime/AvgSize: ', avgTime / avgSize);
+// }, 3000);
 
 // const writeAsCSV = (data, fileName, cb) => {
 //   // console.log(data);

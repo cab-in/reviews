@@ -1,6 +1,6 @@
 const pg = require('pg');
 
-const filename = 'medData.csv';
+const filename = 'fullData.csv';
 const table = 'review';
 
 const elapsedTime = (t0, t1) =>{
