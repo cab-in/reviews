@@ -37,25 +37,44 @@ class App extends React.Component {
   }
 
   getData() {
-    // const port = 3004;
-    // const listingId = window.location.href.split('/')[4];
-    // axios.get(`http://localhost:${port}/api/${listingId}/reviews`)
-    const listingId = window.location.href.split('/')[4];
-    console.log('window.location.href: ', window.location.href);
-    console.log('listingId: ', listingId);
-    axios.get(`/api/${listingId}/reviews`)
-      .then((res) => {
-        // console.log('axios res.data[0]', res.data[0]);
+    fetch('reviews', {
+      method: 'GET',
+    }).then(data => data.json())
+      .then((data) => {
+        console.log(data);
+        const ratings = this.getRatings(data);
         this.setState({
-          totalReviews: res.data[0].numReviews,
-          allReviews: res.data[0].reviews,
-          displayedReviews: res.data[0].reviews.slice(0, 7),
-          ratings: res.data[0].ratings,
+          totalReviews: data.length,
+          allReviews: data,
+          displayedReviews: data.slice(0, 7),
+          ratings,
         });
       })
-      .catch((err) => {
-        console.log('axios error:', err);
-      });
+      .catch(err => console.log(err));
+  }
+
+  getRatings(data) {
+    this;
+    const ratings = {
+      overall: 0,
+      accuracy: 0,
+      comminication: 0,
+      cleanliness: 0,
+      location: 0,
+      check_in: 0,
+      value: 0,
+    };
+    const { length } = data;
+    data.forEach((val) => {
+      ratings.overall += val.overall_rating / length;
+      ratings.accuracy += val.accuracy_rating / length;
+      ratings.comminication += val.communication_rating / length;
+      ratings.cleanliness += val.cleanliness_rating / length;
+      ratings.location += val.location_rating / length;
+      ratings.check_in += val.check_in_rating / length;
+      ratings.value += val.value_rating / length;
+    });
+    return ratings;
   }
 
   sliceReviews() {
