@@ -1,10 +1,11 @@
 const faker = require('faker');
 const stream = require('stream');
 const fs = require('fs');
+const uuidv4 = require('uuid/v4');
 
 const test = false;
-const numberOfListings = 1000000;
-const outputFile = 'medData.csv';
+const numberOfListings = 1000;
+const outputFile = 'smallData.csv';
 const t0 = Date.now();
 console.log(new Date());
 let t1;
@@ -15,9 +16,9 @@ const generateReviewCSV = (listingId) => {
   let reviewDate = faker.date.past().toISOString();
   reviewDate = reviewDate.slice(0, 19) + reviewDate.slice(23);
   let review = [];
-  review.push(count);
+  review.push(uuidv4());
   review.push(listingId);
-  review.push(faker.finance.amount(201, 1000, 0)); //   userId: String,
+  review.push(faker.finance.amount(1, 1000, 0)); //   userId: String,
   review.push(reviewDate); //   createdAt: Date,
   review.push(random % 5 === 0
     ? faker.lorem.paragraph().split(' ').slice(0, 55).join(' ') : faker.lorem.paragraph().split(' ').slice(0, 30).join(' ')); //   text: String,
@@ -31,7 +32,7 @@ const generateReviewCSV = (listingId) => {
 
   if (random % 3 === 0) {
     review.push(true); //   hasResponse: Boolean,
-    review.push(faker.finance.amount(1, 200, 0)); //   hostId: String,
+    review.push(faker.finance.amount(1, 1000, 0)); //   hostId: String,
     review.push(faker.lorem.sentence()); //   responseText: String,
     let today = new Date();
     today = today.toISOString().slice(0, 10);
@@ -40,7 +41,7 @@ const generateReviewCSV = (listingId) => {
     review.push(responseDate); //   responseCreatedAt: Date,
   } else {
     review.push(false);//   hasResponse: Boolean,
-    review.push(null);
+    review.push(null); // host id
     review.push(null);
     review.push(null);
   }
@@ -75,6 +76,7 @@ const generateData = (writeStream, encoding, num, cb) => {
   let nextProgress = -1;
   const write = () => {
     let ok = true;
+    writeStream.write(headerCSV, encoding);
     while (listingId > 0 && ok) {
       let quantity = 1;
       if (listingId > stellar) {
