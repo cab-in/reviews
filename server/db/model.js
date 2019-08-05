@@ -1,18 +1,19 @@
+const uuidv4 = require('uuid/v4');
 const pool = require('./index.js');
 
 module.exports = {
 
   getByListing: (listingId, startingIndex = 0) => {
     const query = `
-      SELECT r.*, u.*, h.* 
+      SELECT r.*, u.*, h.*
       FROM review r
       LEFT JOIN users u
       ON r.user_id = u.user_id
-      LEFT JOIN hosts h 
+      LEFT JOIN hosts h
       ON h.host_id = r.host_id
-      where r.listing_id = ${listingId} 
-      ORDER BY r.created_at DESC 
-      LIMIT 100 
+      where r.listing_id = ${listingId}
+      ORDER BY r.created_at DESC
+      LIMIT 100
       OFFSET ${startingIndex};
       `;
     return pool.query(query);
@@ -20,15 +21,15 @@ module.exports = {
 
   getByUser: (userId, startingIndex = 0) => {
     const query = `
-      SELECT r.*, u.*, h.* 
+      SELECT r.*, u.*, h.*
       FROM review r
       LEFT JOIN users u
       ON r.user_id = u.user_id
-      LEFT JOIN hosts h 
+      LEFT JOIN hosts h
       ON h.host_id = r.host_id
-      where r.user_id = ${userId} 
-      ORDER BY r.created_at DESC 
-      LIMIT 100 
+      where r.user_id = ${userId}
+      ORDER BY r.created_at DESC
+      LIMIT 100
       OFFSET ${startingIndex};
       `;
     return pool.query(query);
@@ -36,7 +37,7 @@ module.exports = {
 
   postReview: (listingId, review) => {
     const query = `
-      INSERT INTO review 
+      INSERT INTO review
       (
         review_id,
         listing_id,
@@ -57,6 +58,7 @@ module.exports = {
       )
       VALUES
       (
+        ${uuidv4()},
         ${listingId},
         ${review.userId},
         ${new Date()},
@@ -68,7 +70,7 @@ module.exports = {
         ${review.locationRating},
         ${review.checkInRating},
         ${review.valueRating},
-        null,
+        false,
         null,
         null,
         null,
@@ -80,7 +82,7 @@ module.exports = {
   addResponse: (reviewId, response) => {
     const query = `
     UPDATE review
-    SET 
+    SET
     has_response = ${true},
     host_id = ${response.hostId},
     response_text = ${response.text},
@@ -102,7 +104,7 @@ module.exports = {
   putReview: (reviewId, review) => {
     const query = `
       UPDATE review
-      SET 
+      SET
       text = ${review.text},
       overall_rating = ${review.overallRating},
       accuracy_rating = ${review.accuracyRating},
