@@ -32,3 +32,4 @@ notes.txt
 
 *.csv
 dump.rdb
+server/db/authentication.js

@@ -1,5 +1,5 @@
 const pg = require('pg');
-const password = require('./authentication.js')
+const password = require('./authentication.js');
 
 const pool = new pg.Pool({
   user: 'postgres',
