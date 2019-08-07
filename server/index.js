@@ -8,9 +8,10 @@ const path = require('path');
 const model = require('./db/model');
 
 const port = 3000;
-const { REDIS_PORT } = process.env;
+// const REDIS_PORT = 'http://reddis_db:6379';
+const { REDIS_URL } = process.env;
 
-const client = redis.createClient(REDIS_PORT);
+const client = redis.createClient(REDIS_URL);
 
 const cache = (req, res, next) => {
   const listing = req.params.listingId;
@@ -23,6 +24,10 @@ const cache = (req, res, next) => {
     }
   });
 };
+
+app.get('/loaderio-f9328491f0491ae41b33039d6d1929e0', (req, res) => {
+  res.sendFile(path.join(__dirname, '../loaderio-f9328491f0491ae41b33039d6d1929e0.txt'));
+});
 
 app.use('/:listingid', express.static(path.join(__dirname, '../client/dist')));
 

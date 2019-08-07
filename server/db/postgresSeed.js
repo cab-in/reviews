@@ -21,7 +21,7 @@ let t3;
 
 const pool = new pg.Pool({
   user: 'postgres',
-  host: '54.196.73.233',
+  host: '3.86.43.121',
   password: '$password123',
   database: 'sdc',
   port: '5432',
@@ -82,7 +82,7 @@ pool.query(`CREATE TABLE IF NOT EXISTS reviews
   .catch(err => console.log(err));
 
 
-  // psql -h 54.196.73.233 -d sdc -U postgres -c "\copy reviews
+  // psql -h 3.86.43.121 -d sdc -U postgres -c "\copy reviews
   //     (
   //       review_id,
   //       listing_id,
@@ -100,4 +100,24 @@ pool.query(`CREATE TABLE IF NOT EXISTS reviews
   //       host_id,
   //       response_text,
   //       response_created_at
-  //     ) from '/Users/zachthomas/HR/SDC/review/server/db/smallData.csv' with delimiter as ',' NULL AS '';"
+  //     ) from '/Users/zachthomas/HR/SDC/review/server/db/partaa.csv' with delimiter as ',' NULL AS '';"
+
+
+  // pv partaa.csv | psql -d sdc -U postgres -c "COPY reviews (
+  //         review_id,
+  //         listing_id,
+  //         user_id,
+  //         created_at,
+  //         text,
+  //         overall_rating,
+  //         accuracy_rating,
+  //         communication_rating,
+  //         cleanliness_rating,
+  //         location_rating,
+  //         check_in_rating,
+  //         value_rating,
+  //         has_response,
+  //         host_id,
+  //         response_text,
+  //         response_created_at
+  //       ) from STDIN with delimiter as ',' NULL AS '';"

@@ -1,0 +1,10 @@
+node_modules
+*.csv
+*/*.csv
+*/*/*.csv
+*/*/*/*.csv
+/server/db/testing
+*.DS_Store
+/client/src
+/client/test
+*.rdb
