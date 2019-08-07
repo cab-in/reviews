@@ -9,9 +9,10 @@ const model = require('./db/model');
 
 const port = 3000;
 // const REDIS_PORT = 'http://reddis_db:6379';
-const { REDIS_URL } = process.env;
+const { REDIS_PORT } = process.env;
 
-const client = redis.createClient(REDIS_URL);
+const client = redis.createClient(REDIS_PORT);
+console.log(REDIS_PORT);
 
 const cache = (req, res, next) => {
   const listing = req.params.listingId;

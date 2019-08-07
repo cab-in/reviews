@@ -6,8 +6,11 @@ services:
     ports:
       - '3000:3000'
     links:
-      - redis_db
-  redis_db:
+      - redis
+    environment:
+      - REDIS_URL=redis://cache
+  redis:
     image: redis:latest
+    container_name: cache
     expose:
       - '6379'
