@@ -6,7 +6,7 @@ module.exports = {
   getByListing: (listingId, startingIndex = 0) => {
     const query = `
       SELECT r.*, u.*, h.*
-      FROM review r
+      FROM reviews r
       LEFT JOIN users u
       ON r.user_id = u.user_id
       LEFT JOIN hosts h
@@ -22,7 +22,7 @@ module.exports = {
   getByUser: (userId, startingIndex = 0) => {
     const query = `
       SELECT r.*, u.*, h.*
-      FROM review r
+      FROM reviews r
       LEFT JOIN users u
       ON r.user_id = u.user_id
       LEFT JOIN hosts h
@@ -37,7 +37,7 @@ module.exports = {
 
   postReview: (listingId, review) => {
     const query = `
-      INSERT INTO review
+      INSERT INTO reviews
       (
         review_id,
         listing_id,
@@ -81,7 +81,7 @@ module.exports = {
 
   addResponse: (reviewId, response) => {
     const query = `
-    UPDATE review
+    UPDATE reviews
     SET
     has_response = ${true},
     host_id = ${response.hostId},
@@ -94,7 +94,7 @@ module.exports = {
 
   patchReview: (reviewId, column, value) => {
     const query = `
-      UPDATE review
+      UPDATE reviews
       SET ${column} = ${value}
       WHERE review_id = ${reviewId};
     `;
@@ -103,7 +103,7 @@ module.exports = {
 
   putReview: (reviewId, review) => {
     const query = `
-      UPDATE review
+      UPDATE reviews
       SET
       text = ${review.text},
       overall_rating = ${review.overallRating},
@@ -119,7 +119,7 @@ module.exports = {
   },
 
   deleteReview: (reviewId) => {
-    const query = `DELETE FROM review WHERE review_id = ${reviewId};`;
+    const query = `DELETE FROM reviews WHERE review_id = ${reviewId};`;
     pool.query(query);
   },
 
