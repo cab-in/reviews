@@ -4,7 +4,7 @@ const fs = require('fs');
 const uuidv4 = require('uuid/v4');
 
 const test = false;
-const numberOfListings = 1000;
+const numberOfListings = 100;
 const outputFile = 'smallData.csv';
 const t0 = Date.now();
 console.log(new Date());
@@ -41,7 +41,7 @@ const generateReviewCSV = (listingId) => {
     review.push(responseDate); //   responseCreatedAt: Date,
   } else {
     review.push(false);//   hasResponse: Boolean,
-    review.push(null); // host id
+    review.push(faker.finance.amount(1, 1000, 0)); // host id
     review.push(null);
     review.push(null);
   }
@@ -74,9 +74,9 @@ const generateData = (writeStream, encoding, num, cb) => {
   const prettyDamnGood = listingId - Math.ceil(num * 0.005);
   const meh = listingId - Math.ceil(num * 0.05);
   let nextProgress = -1;
+  // writeStream.write(headerCSV, encoding);
   const write = () => {
     let ok = true;
-    writeStream.write(headerCSV, encoding);
     while (listingId > 0 && ok) {
       let quantity = 1;
       if (listingId > stellar) {

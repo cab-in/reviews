@@ -8,7 +8,7 @@ const path = require('path');
 const model = require('./db/model');
 
 const port = 3000;
-const REDIS_PORT = process.env.REDIS_PORT;
+const { REDIS_PORT } = process.env;
 
 const client = redis.createClient(REDIS_PORT);
 
