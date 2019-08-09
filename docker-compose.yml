@@ -8,9 +8,9 @@ services:
     links:
       - redis
     environment:
-      - REDIS_URL=redis://cache
+      - REDIS_PORT=redis://cache
   redis:
-    image: redis:latest
+    image: redis
     container_name: cache
     expose:
       - '6379'

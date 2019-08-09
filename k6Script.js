@@ -18,5 +18,4 @@ export default function () {
     const id = Math.floor(random * 9949500);
     http.get(`http://localhost:3000/${id}/reviews`);
   }
-  // sleep(0.2);
 }

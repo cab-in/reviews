@@ -8,7 +8,6 @@ const path = require('path');
 const model = require('./db/model');
 
 const port = 3000;
-// const REDIS_PORT = 'http://reddis_db:6379';
 const { REDIS_PORT } = process.env;
 
 const client = redis.createClient(REDIS_PORT);
@@ -17,7 +16,7 @@ console.log(REDIS_PORT);
 const cache = (req, res, next) => {
   const listing = req.params.listingId;
   client.get(listing, (err, data) => {
-    if (err) throw err;
+    if (err) console.log(err);
     if (data !== null) {
       res.send(data);
     } else {
@@ -26,13 +25,13 @@ const cache = (req, res, next) => {
   });
 };
 
-app.get('/loaderio-f9328491f0491ae41b33039d6d1929e0', (req, res) => {
-  res.sendFile(path.join(__dirname, '../loaderio-f9328491f0491ae41b33039d6d1929e0.txt'));
+app.get('/loaderio-81a840af16aae4f0949bc27d59080096', (req, res) => {
+  res.sendFile(path.join(__dirname, '../loaderio-81a840af16aae4f0949bc27d59080096.txt'));
 });
 
 app.use('/:listingid', express.static(path.join(__dirname, '../client/dist')));
 
-app.get('/:listingId/reviews', cache, (req, res) => {
+app.get('/:listingId/reviews', (req, res) => {
   // console.log('GET:', req.params);
   const listing = req.params.listingId;
   model.getByListing(listing)

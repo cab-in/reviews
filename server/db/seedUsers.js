@@ -1,5 +1,8 @@
 const pool = require('./index.js');
 
+// testdb 54.196.73.233
+// actualdb 3.86.43.121
+
 const user = true;
 
 const userTable = `CREATE TABLE IF NOT EXISTS users
@@ -34,7 +37,7 @@ pool.query(table)
   // })
   .catch(err => console.log(err));
 
-// psql -h 54.196.73.233 -d sdc -U postgres -c "\copy users
+// psql -h 3.86.43.121 -d sdc -U postgres -c "\copy users
 //   (
 //     user_id,
 //     first_name,
@@ -42,10 +45,10 @@ pool.query(table)
 //     avatar
 //   ) from '/Users/zachthomas/HR/SDC/review/server/db/users.csv' with delimiter as ',' NULL AS '' CSV HEADER;"
 
-//   psql -h 54.196.73.233 -d sdc -U postgres -c "\copy hosts
-//   (
-//     host_id,
-//     host_first_name,
-//     host_last_name,
-//     host_avatar
-//   ) from '/Users/zachthomas/HR/SDC/review/server/db/hosts.csv' with delimiter as ',' NULL AS '' CSV HEADER;"
+  // psql -h 3.86.43.121 -d sdc -U postgres -c "\copy hosts
+  // (
+  //   host_id,
+  //   host_first_name,
+  //   host_last_name,
+  //   host_avatar
+  // ) from '/Users/zachthomas/HR/SDC/review/server/db/hosts.csv' with delimiter as ',' NULL AS '' CSV HEADER;"

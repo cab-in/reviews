@@ -61,24 +61,24 @@ pool.query(`CREATE TABLE IF NOT EXISTS reviews
   console.log('table created');
   // return pool.query(`COPY ${table} FROM '${__dirname}/${filename}' DELIMITER ',' CSV HEADER`);
 })
-  // .then(() => {
-  //   t1 = Date.now();
-  //   console.log('database seeded');
-  //   elapsedTime(t0, t1);
-  //   return pool.query(`CREATE INDEX listing_index ON ${table} (listing_id)`);
-  // })
-  // .then(() => {
-  //   t2 = Date.now();
-  //   console.log('added listing ID index');
-  //   elapsedTime(t1, t2);
-  //   return pool.query(`CREATE INDEX user_index ON ${table} (user_id)`);
-  // })
-  // .then(() => {
-  //   t3 = Date.now();
-  //   console.log('added listing ID index');
-  //   elapsedTime(t2, t3);
-  //   console.log('Done');
-  // })
+  .then(() => {
+    t1 = Date.now();
+    console.log('database seeded');
+    elapsedTime(t0, t1);
+    return pool.query(`CREATE INDEX listing_index ON ${table} (listing_id)`);
+  })
+  .then(() => {
+    t2 = Date.now();
+    console.log('added listing ID index');
+    elapsedTime(t1, t2);
+    return pool.query(`CREATE INDEX user_index ON ${table} (user_id)`);
+  })
+  .then(() => {
+    t3 = Date.now();
+    console.log('added listing ID index');
+    elapsedTime(t2, t3);
+    console.log('Done');
+  })
   .catch(err => console.log(err));
 
 
@@ -100,7 +100,7 @@ pool.query(`CREATE TABLE IF NOT EXISTS reviews
   //       host_id,
   //       response_text,
   //       response_created_at
-  //     ) from '/Users/zachthomas/HR/SDC/review/server/db/partaa.csv' with delimiter as ',' NULL AS '';"
+  //     ) from '/Users/zachthomas/HR/SDC/review/server/db/partac.csv' with delimiter as ',' NULL AS '';"
 
 
   // pv partaa.csv | psql -d sdc -U postgres -c "COPY reviews (
